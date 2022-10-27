@@ -1,0 +1,1132 @@
+  [1m[35m (47.9ms)[0m  [1m[35mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL PRIMARY KEY)[0m
+  [1m[35m (7.0ms)[0m  [1m[35mCREATE TABLE "ar_internal_metadata" ("key" varchar NOT NULL PRIMARY KEY, "value" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+Migrating to CreateDoctors (20221027072148)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "doctors" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "first_name" varchar, "last_name" varchar, "specialty" varchar, "zip_code" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027072148"]]
+  [1m[36mTRANSACTION (8.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreatePatients (20221027072423)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "patients" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "first_name" varchar, "last_name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027072423"]]
+  [1m[36mTRANSACTION (8.4ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateAppointments (20221027072438)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "appointments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "date" datetime(6), "doctor_id" integer, "patient_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_doctor_id" ON "appointments" ("doctor_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_patient_id" ON "appointments" ("patient_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027072438"]]
+  [1m[36mTRANSACTION (9.2ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateCities (20221027082653)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mCREATE TABLE "cities" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027082653"]]
+  [1m[36mTRANSACTION (9.9ms)[0m  [1m[36mcommit transaction[0m
+Migrating to AddIndexToDoctors (20221027083404)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.5ms)[0m  [1m[35mALTER TABLE "doctors" ADD "city_id" integer[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_doctors_on_city_id" ON "doctors" ("city_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TEMPORARY TABLE "adoctors" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "specialty" varchar DEFAULT NULL, "zip_code" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_adoctors_on_city_id" ON "adoctors" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[32mINSERT INTO "adoctors" ("id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id" FROM "doctors"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "doctors"[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCREATE TABLE "doctors" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "specialty" varchar DEFAULT NULL, "zip_code" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_7d07bf1fcc"
+FOREIGN KEY ("city_id")
+  REFERENCES "cities" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_doctors_on_city_id" ON "doctors" ("city_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[32mINSERT INTO "doctors" ("id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id" FROM "adoctors"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "adoctors"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027083404"]]
+  [1m[36mTRANSACTION (9.5ms)[0m  [1m[36mcommit transaction[0m
+Migrating to AddIndexToPatients (20221027083409)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "patients" ADD "city_id" integer[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_patients_on_city_id" ON "patients" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TEMPORARY TABLE "apatients" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_apatients_on_city_id" ON "apatients" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[32mINSERT INTO "apatients" ("id","first_name","last_name","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","created_at","updated_at","city_id" FROM "patients"[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "patients"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "patients" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_5f4f0a6f13"
+FOREIGN KEY ("city_id")
+  REFERENCES "cities" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_patients_on_city_id" ON "patients" ("city_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[32mINSERT INTO "patients" ("id","first_name","last_name","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","created_at","updated_at","city_id" FROM "apatients"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "apatients"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA foreign_keys = 1[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027083409"]]
+  [1m[36mTRANSACTION (8.8ms)[0m  [1m[36mcommit transaction[0m
+Migrating to AddIndexToAppointments (20221027083417)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.3ms)[0m  [1m[35mALTER TABLE "appointments" ADD "city_id" integer[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_city_id" ON "appointments" ("city_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TEMPORARY TABLE "aappointments" ("id" integer NOT NULL PRIMARY KEY, "date" datetime(6) DEFAULT NULL, "doctor_id" integer DEFAULT NULL, "patient_id" integer DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_aappointments_on_city_id" ON "aappointments" ("city_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "tindex_aappointments_on_patient_id" ON "aappointments" ("patient_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_aappointments_on_doctor_id" ON "aappointments" ("doctor_id")[0m
+  [1m[35m (0.0ms)[0m  [1m[32mINSERT INTO "aappointments" ("id","date","doctor_id","patient_id","created_at","updated_at","city_id")
+                     SELECT "id","date","doctor_id","patient_id","created_at","updated_at","city_id" FROM "appointments"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "appointments"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "appointments" ("id" integer NOT NULL PRIMARY KEY, "date" datetime(6) DEFAULT NULL, "doctor_id" integer DEFAULT NULL, "patient_id" integer DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_fecccdeb72"
+FOREIGN KEY ("city_id")
+  REFERENCES "cities" ("id")
+)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_doctor_id" ON "appointments" ("doctor_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_patient_id" ON "appointments" ("patient_id")[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_appointments_on_city_id" ON "appointments" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("id","date","doctor_id","patient_id","created_at","updated_at","city_id")
+                     SELECT "id","date","doctor_id","patient_id","created_at","updated_at","city_id" FROM "aappointments"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "aappointments"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027083417"]]
+  [1m[36mTRANSACTION (8.4ms)[0m  [1m[36mcommit transaction[0m
+Migrating to RemoveDoctorSpecialty (20221027084834)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = ON[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = OFF[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TEMPORARY TABLE "adoctors" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "specialty" varchar DEFAULT NULL, "zip_code" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "tindex_adoctors_on_city_id" ON "adoctors" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[32mINSERT INTO "adoctors" ("id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","specialty","zip_code","created_at","updated_at","city_id" FROM "doctors"[0m
+  [1m[35m (0.2ms)[0m  [1m[35mDROP TABLE "doctors"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE TABLE "doctors" ("id" integer NOT NULL PRIMARY KEY, "first_name" varchar DEFAULT NULL, "last_name" varchar DEFAULT NULL, "zip_code" varchar DEFAULT NULL, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL, "city_id" integer DEFAULT NULL, CONSTRAINT "fk_rails_7d07bf1fcc"
+FOREIGN KEY ("city_id")
+  REFERENCES "cities" ("id")
+)[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE INDEX "index_doctors_on_city_id" ON "doctors" ("city_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("id","first_name","last_name","zip_code","created_at","updated_at","city_id")
+                     SELECT "id","first_name","last_name","zip_code","created_at","updated_at","city_id" FROM "adoctors"[0m
+  [1m[35m (0.1ms)[0m  [1m[35mDROP TABLE "adoctors"[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA defer_foreign_keys = 0[0m
+  [1m[35m (0.0ms)[0m  [1m[35mPRAGMA foreign_keys = 1[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.1ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027084834"]]
+  [1m[36mTRANSACTION (6.9ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateSpecialties (20221027085433)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "specialties" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "specialty" varchar, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027085433"]]
+  [1m[36mTRANSACTION (9.2ms)[0m  [1m[36mcommit transaction[0m
+Migrating to CreateDoctorSpecialties (20221027085508)
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[35m (0.2ms)[0m  [1m[35mCREATE TABLE "doctor_specialties" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "doctor_id" integer, "specialty_id" integer, "created_at" datetime(6) NOT NULL, "updated_at" datetime(6) NOT NULL)[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_doctor_specialties_on_doctor_id" ON "doctor_specialties" ("doctor_id")[0m
+  [1m[35m (0.1ms)[0m  [1m[35mCREATE INDEX "index_doctor_specialties_on_specialty_id" ON "doctor_specialties" ("specialty_id")[0m
+  [1m[36mActiveRecord::SchemaMigration Create (0.2ms)[0m  [1m[32mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20221027085508"]]
+  [1m[36mTRANSACTION (8.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Load (0.2ms)[0m  [1m[34mSELECT "ar_internal_metadata".* FROM "ar_internal_metadata" WHERE "ar_internal_metadata"."key" = ? LIMIT ?[0m  [["key", "environment"], ["LIMIT", 1]]
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mActiveRecord::InternalMetadata Create (0.2ms)[0m  [1m[32mINSERT INTO "ar_internal_metadata" ("key", "value", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["key", "environment"], ["value", "development"], ["created_at", "2022-10-27 12:52:13.445638"], ["updated_at", "2022-10-27 12:52:13.445638"]]
+  [1m[36mTRANSACTION (6.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mActiveRecord::SchemaMigration Pluck (0.1ms)[0m  [1m[34mSELECT "schema_migrations"."version" FROM "schema_migrations" ORDER BY "schema_migrations"."version" ASC[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.2ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Maribelfort"], ["created_at", "2022-10-27 12:52:27.000325"], ["updated_at", "2022-10-27 12:52:27.000325"]]
+  [1m[36mTRANSACTION (8.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.2ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Lake Horacio"], ["created_at", "2022-10-27 12:52:27.016716"], ["updated_at", "2022-10-27 12:52:27.016716"]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Melisafurt"], ["created_at", "2022-10-27 12:52:27.026309"], ["updated_at", "2022-10-27 12:52:27.026309"]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Johnston"], ["created_at", "2022-10-27 12:52:27.036794"], ["updated_at", "2022-10-27 12:52:27.036794"]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Willmshaven"], ["created_at", "2022-10-27 12:52:27.045079"], ["updated_at", "2022-10-27 12:52:27.045079"]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "West Joelside"], ["created_at", "2022-10-27 12:52:27.053933"], ["updated_at", "2022-10-27 12:52:27.053933"]]
+  [1m[36mTRANSACTION (5.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Weimannfort"], ["created_at", "2022-10-27 12:52:27.062418"], ["updated_at", "2022-10-27 12:52:27.062418"]]
+  [1m[36mTRANSACTION (5.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Heathview"], ["created_at", "2022-10-27 12:52:27.071057"], ["updated_at", "2022-10-27 12:52:27.071057"]]
+  [1m[36mTRANSACTION (5.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "Boehmtown"], ["created_at", "2022-10-27 12:52:27.079258"], ["updated_at", "2022-10-27 12:52:27.079258"]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.7ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Create (0.1ms)[0m  [1m[32mINSERT INTO "cities" ("name", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["name", "New Jedberg"], ["created_at", "2022-10-27 12:52:27.092209"], ["updated_at", "2022-10-27 12:52:27.092209"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "specialties" ("specialty", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["specialty", "General practitioner"], ["created_at", "2022-10-27 12:52:27.116249"], ["updated_at", "2022-10-27 12:52:27.116249"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mSpecialty Create (0.2ms)[0m  [1m[32mINSERT INTO "specialties" ("specialty", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["specialty", "Ophthalmologist"], ["created_at", "2022-10-27 12:52:27.129948"], ["updated_at", "2022-10-27 12:52:27.129948"]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "specialties" ("specialty", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["specialty", "Surgeon"], ["created_at", "2022-10-27 12:52:27.142225"], ["updated_at", "2022-10-27 12:52:27.142225"]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "specialties" ("specialty", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["specialty", "Physiotherapist"], ["created_at", "2022-10-27 12:52:27.154652"], ["updated_at", "2022-10-27 12:52:27.154652"]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "specialties" ("specialty", "created_at", "updated_at") VALUES (?, ?, ?)[0m  [["specialty", "Radiologist"], ["created_at", "2022-10-27 12:52:27.164348"], ["updated_at", "2022-10-27 12:52:27.164348"]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Shelba"], ["last_name", "Lubowitz"], ["zip_code", "47340-3430"], ["created_at", "2022-10-27 12:52:27.195858"], ["updated_at", "2022-10-27 12:52:27.195858"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Angel"], ["last_name", "Mayert"], ["zip_code", "89790-4911"], ["created_at", "2022-10-27 12:52:27.205074"], ["updated_at", "2022-10-27 12:52:27.205074"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Louisa"], ["last_name", "Emmerich"], ["zip_code", "75761"], ["created_at", "2022-10-27 12:52:27.213717"], ["updated_at", "2022-10-27 12:52:27.213717"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Guillermo"], ["last_name", "Purdy"], ["zip_code", "02232"], ["created_at", "2022-10-27 12:52:27.222433"], ["updated_at", "2022-10-27 12:52:27.222433"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Tory"], ["last_name", "Veum"], ["zip_code", "59861"], ["created_at", "2022-10-27 12:52:27.231067"], ["updated_at", "2022-10-27 12:52:27.231067"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "June"], ["last_name", "Hermiston"], ["zip_code", "70666-9953"], ["created_at", "2022-10-27 12:52:27.239748"], ["updated_at", "2022-10-27 12:52:27.239748"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Eugenia"], ["last_name", "Klocko"], ["zip_code", "61905"], ["created_at", "2022-10-27 12:52:27.248350"], ["updated_at", "2022-10-27 12:52:27.248350"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Deloise"], ["last_name", "Champlin"], ["zip_code", "22547-7438"], ["created_at", "2022-10-27 12:52:27.256946"], ["updated_at", "2022-10-27 12:52:27.256946"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Jamey"], ["last_name", "Bins"], ["zip_code", "28725-9996"], ["created_at", "2022-10-27 12:52:27.266100"], ["updated_at", "2022-10-27 12:52:27.266100"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mDoctor Create (0.1ms)[0m  [1m[32mINSERT INTO "doctors" ("first_name", "last_name", "zip_code", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["first_name", "Jesica"], ["last_name", "Kautzer"], ["zip_code", "37250-2343"], ["created_at", "2022-10-27 12:52:27.274789"], ["updated_at", "2022-10-27 12:52:27.274789"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.1ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 3], ["specialty_id", 5], ["created_at", "2022-10-27 12:52:27.290844"], ["updated_at", "2022-10-27 12:52:27.290844"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 2], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.300193"], ["updated_at", "2022-10-27 12:52:27.300193"]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 10], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.309308"], ["updated_at", "2022-10-27 12:52:27.309308"]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 2], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.318548"], ["updated_at", "2022-10-27 12:52:27.318548"]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 3], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.327937"], ["updated_at", "2022-10-27 12:52:27.327937"]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 2], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.336593"], ["updated_at", "2022-10-27 12:52:27.336593"]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 7], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.345581"], ["updated_at", "2022-10-27 12:52:27.345581"]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 9], ["specialty_id", 3], ["created_at", "2022-10-27 12:52:27.354642"], ["updated_at", "2022-10-27 12:52:27.354642"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.2ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 7], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.364317"], ["updated_at", "2022-10-27 12:52:27.364317"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 1], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.373883"], ["updated_at", "2022-10-27 12:52:27.373883"]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 4], ["specialty_id", 1], ["created_at", "2022-10-27 12:52:27.383888"], ["updated_at", "2022-10-27 12:52:27.383888"]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.2ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 1], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.393415"], ["updated_at", "2022-10-27 12:52:27.393415"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.0ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 8], ["specialty_id", 1], ["created_at", "2022-10-27 12:52:27.402857"], ["updated_at", "2022-10-27 12:52:27.402857"]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 10], ["specialty_id", 1], ["created_at", "2022-10-27 12:52:27.412400"], ["updated_at", "2022-10-27 12:52:27.412400"]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 7], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.421731"], ["updated_at", "2022-10-27 12:52:27.421731"]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 1], ["specialty_id", 1], ["created_at", "2022-10-27 12:52:27.431503"], ["updated_at", "2022-10-27 12:52:27.431503"]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 8], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.441012"], ["updated_at", "2022-10-27 12:52:27.441012"]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 8], ["specialty_id", 4], ["created_at", "2022-10-27 12:52:27.450303"], ["updated_at", "2022-10-27 12:52:27.450303"]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 1], ["specialty_id", 2], ["created_at", "2022-10-27 12:52:27.459805"], ["updated_at", "2022-10-27 12:52:27.459805"]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mSpecialty Load (0.0ms)[0m  [1m[34mSELECT "specialties".* FROM "specialties" WHERE "specialties"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mDoctorSpecialty Create (0.1ms)[0m  [1m[32mINSERT INTO "doctor_specialties" ("doctor_id", "specialty_id", "created_at", "updated_at") VALUES (?, ?, ?, ?)[0m  [["doctor_id", 7], ["specialty_id", 5], ["created_at", "2022-10-27 12:52:27.469384"], ["updated_at", "2022-10-27 12:52:27.469384"]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Luciano"], ["last_name", "Bogan"], ["created_at", "2022-10-27 12:52:27.483335"], ["updated_at", "2022-10-27 12:52:27.483335"], ["city_id", 2]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Thad"], ["last_name", "Kirlin"], ["created_at", "2022-10-27 12:52:27.492523"], ["updated_at", "2022-10-27 12:52:27.492523"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Avery"], ["last_name", "Rodriguez"], ["created_at", "2022-10-27 12:52:27.501166"], ["updated_at", "2022-10-27 12:52:27.501166"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Gil"], ["last_name", "Sanford"], ["created_at", "2022-10-27 12:52:27.510701"], ["updated_at", "2022-10-27 12:52:27.510701"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Brandon"], ["last_name", "Erdman"], ["created_at", "2022-10-27 12:52:27.519682"], ["updated_at", "2022-10-27 12:52:27.519682"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Darryl"], ["last_name", "Bechtelar"], ["created_at", "2022-10-27 12:52:27.528309"], ["updated_at", "2022-10-27 12:52:27.528309"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Larhonda"], ["last_name", "Upton"], ["created_at", "2022-10-27 12:52:27.536916"], ["updated_at", "2022-10-27 12:52:27.536916"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Porter"], ["last_name", "Wintheiser"], ["created_at", "2022-10-27 12:52:27.545826"], ["updated_at", "2022-10-27 12:52:27.545826"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Chester"], ["last_name", "Boyer"], ["created_at", "2022-10-27 12:52:27.554720"], ["updated_at", "2022-10-27 12:52:27.554720"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Naoma"], ["last_name", "Strosin"], ["created_at", "2022-10-27 12:52:27.563787"], ["updated_at", "2022-10-27 12:52:27.563787"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Quinton"], ["last_name", "Ebert"], ["created_at", "2022-10-27 12:52:27.572699"], ["updated_at", "2022-10-27 12:52:27.572699"], ["city_id", 2]]
+  [1m[36mTRANSACTION (6.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Yvette"], ["last_name", "Langworth"], ["created_at", "2022-10-27 12:52:27.582132"], ["updated_at", "2022-10-27 12:52:27.582132"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.2ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Willia"], ["last_name", "Fahey"], ["created_at", "2022-10-27 12:52:27.591170"], ["updated_at", "2022-10-27 12:52:27.591170"], ["city_id", 9]]
+  [1m[36mTRANSACTION (6.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Idella"], ["last_name", "Bahringer"], ["created_at", "2022-10-27 12:52:27.600528"], ["updated_at", "2022-10-27 12:52:27.600528"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Keeley"], ["last_name", "Hoppe"], ["created_at", "2022-10-27 12:52:27.609159"], ["updated_at", "2022-10-27 12:52:27.609159"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Teresita"], ["last_name", "Gleason"], ["created_at", "2022-10-27 12:52:27.617632"], ["updated_at", "2022-10-27 12:52:27.617632"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Emelda"], ["last_name", "Gislason"], ["created_at", "2022-10-27 12:52:27.626054"], ["updated_at", "2022-10-27 12:52:27.626054"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Lyn"], ["last_name", "Kiehn"], ["created_at", "2022-10-27 12:52:27.634624"], ["updated_at", "2022-10-27 12:52:27.634624"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "August"], ["last_name", "Leuschke"], ["created_at", "2022-10-27 12:52:27.643476"], ["updated_at", "2022-10-27 12:52:27.643476"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Burl"], ["last_name", "Baumbach"], ["created_at", "2022-10-27 12:52:27.652306"], ["updated_at", "2022-10-27 12:52:27.652306"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Lila"], ["last_name", "Keebler"], ["created_at", "2022-10-27 12:52:27.660750"], ["updated_at", "2022-10-27 12:52:27.660750"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Latanya"], ["last_name", "Koch"], ["created_at", "2022-10-27 12:52:27.669533"], ["updated_at", "2022-10-27 12:52:27.669533"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Johana"], ["last_name", "Pacocha"], ["created_at", "2022-10-27 12:52:27.678208"], ["updated_at", "2022-10-27 12:52:27.678208"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Renaldo"], ["last_name", "Howell"], ["created_at", "2022-10-27 12:52:27.687334"], ["updated_at", "2022-10-27 12:52:27.687334"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Lean"], ["last_name", "Koelpin"], ["created_at", "2022-10-27 12:52:27.696235"], ["updated_at", "2022-10-27 12:52:27.696235"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Gladis"], ["last_name", "Harber"], ["created_at", "2022-10-27 12:52:27.704830"], ["updated_at", "2022-10-27 12:52:27.704830"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Regenia"], ["last_name", "Padberg"], ["created_at", "2022-10-27 12:52:27.713541"], ["updated_at", "2022-10-27 12:52:27.713541"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.2ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Jefferey"], ["last_name", "Watsica"], ["created_at", "2022-10-27 12:52:27.722821"], ["updated_at", "2022-10-27 12:52:27.722821"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Milo"], ["last_name", "Lynch"], ["created_at", "2022-10-27 12:52:27.731672"], ["updated_at", "2022-10-27 12:52:27.731672"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Josiah"], ["last_name", "Sanford"], ["created_at", "2022-10-27 12:52:27.740934"], ["updated_at", "2022-10-27 12:52:27.740934"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Hoa"], ["last_name", "Kautzer"], ["created_at", "2022-10-27 12:52:27.750181"], ["updated_at", "2022-10-27 12:52:27.750181"], ["city_id", 5]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.2ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Stefanie"], ["last_name", "Hessel"], ["created_at", "2022-10-27 12:52:27.759551"], ["updated_at", "2022-10-27 12:52:27.759551"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Nolan"], ["last_name", "Towne"], ["created_at", "2022-10-27 12:52:27.768753"], ["updated_at", "2022-10-27 12:52:27.768753"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Cathy"], ["last_name", "DuBuque"], ["created_at", "2022-10-27 12:52:27.777571"], ["updated_at", "2022-10-27 12:52:27.777571"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "David"], ["last_name", "Waelchi"], ["created_at", "2022-10-27 12:52:27.786524"], ["updated_at", "2022-10-27 12:52:27.786524"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Hilary"], ["last_name", "Crona"], ["created_at", "2022-10-27 12:52:27.795214"], ["updated_at", "2022-10-27 12:52:27.795214"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Leslie"], ["last_name", "Feeney"], ["created_at", "2022-10-27 12:52:27.803989"], ["updated_at", "2022-10-27 12:52:27.803989"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Imelda"], ["last_name", "Pfeffer"], ["created_at", "2022-10-27 12:52:27.812573"], ["updated_at", "2022-10-27 12:52:27.812573"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Antwan"], ["last_name", "Bayer"], ["created_at", "2022-10-27 12:52:27.821253"], ["updated_at", "2022-10-27 12:52:27.821253"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Lane"], ["last_name", "Rath"], ["created_at", "2022-10-27 12:52:27.830195"], ["updated_at", "2022-10-27 12:52:27.830195"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Jere"], ["last_name", "Upton"], ["created_at", "2022-10-27 12:52:27.838818"], ["updated_at", "2022-10-27 12:52:27.838818"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Mellissa"], ["last_name", "Kerluke"], ["created_at", "2022-10-27 12:52:27.847611"], ["updated_at", "2022-10-27 12:52:27.847611"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Garret"], ["last_name", "Pfannerstill"], ["created_at", "2022-10-27 12:52:27.856428"], ["updated_at", "2022-10-27 12:52:27.856428"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Rolando"], ["last_name", "Wyman"], ["created_at", "2022-10-27 12:52:27.865255"], ["updated_at", "2022-10-27 12:52:27.865255"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Francis"], ["last_name", "Cassin"], ["created_at", "2022-10-27 12:52:27.874116"], ["updated_at", "2022-10-27 12:52:27.874116"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Cher"], ["last_name", "Aufderhar"], ["created_at", "2022-10-27 12:52:27.885285"], ["updated_at", "2022-10-27 12:52:27.885285"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Douglas"], ["last_name", "Ritchie"], ["created_at", "2022-10-27 12:52:27.894343"], ["updated_at", "2022-10-27 12:52:27.894343"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.2ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Jacinta"], ["last_name", "Mayert"], ["created_at", "2022-10-27 12:52:27.903710"], ["updated_at", "2022-10-27 12:52:27.903710"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Osvaldo"], ["last_name", "Welch"], ["created_at", "2022-10-27 12:52:27.912598"], ["updated_at", "2022-10-27 12:52:27.912598"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Create (0.1ms)[0m  [1m[32mINSERT INTO "patients" ("first_name", "last_name", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?)[0m  [["first_name", "Danial"], ["last_name", "Buckridge"], ["created_at", "2022-10-27 12:52:27.921368"], ["updated_at", "2022-10-27 12:52:27.921368"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 12], ["LIMIT", 1]]
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:55:58"], ["doctor_id", 9], ["patient_id", 12], ["created_at", "2022-10-27 12:52:27.940154"], ["updated_at", "2022-10-27 12:52:27.940154"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.2ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 10:59:38"], ["doctor_id", 4], ["patient_id", 50], ["created_at", "2022-10-27 12:52:27.950875"], ["updated_at", "2022-10-27 12:52:27.950875"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 46], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 04:25:45"], ["doctor_id", 4], ["patient_id", 46], ["created_at", "2022-10-27 12:52:27.960961"], ["updated_at", "2022-10-27 12:52:27.960961"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 39], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 10:43:33"], ["doctor_id", 6], ["patient_id", 39], ["created_at", "2022-10-27 12:52:27.970757"], ["updated_at", "2022-10-27 12:52:27.970757"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 25], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:01:40"], ["doctor_id", 9], ["patient_id", 25], ["created_at", "2022-10-27 12:52:27.981249"], ["updated_at", "2022-10-27 12:52:27.981249"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 12:35:09"], ["doctor_id", 8], ["patient_id", 24], ["created_at", "2022-10-27 12:52:27.991485"], ["updated_at", "2022-10-27 12:52:27.991485"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 00:53:24"], ["doctor_id", 5], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.001630"], ["updated_at", "2022-10-27 12:52:28.001630"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 16:46:45"], ["doctor_id", 9], ["patient_id", 3], ["created_at", "2022-10-27 12:52:28.011575"], ["updated_at", "2022-10-27 12:52:28.011575"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 28], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.4ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 01:33:27"], ["doctor_id", 9], ["patient_id", 28], ["created_at", "2022-10-27 12:52:28.021906"], ["updated_at", "2022-10-27 12:52:28.021906"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 11:43:07"], ["doctor_id", 4], ["patient_id", 10], ["created_at", "2022-10-27 12:52:28.032785"], ["updated_at", "2022-10-27 12:52:28.032785"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 17], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 11:51:17"], ["doctor_id", 10], ["patient_id", 17], ["created_at", "2022-10-27 12:52:28.043558"], ["updated_at", "2022-10-27 12:52:28.043558"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 49], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 23:30:02"], ["doctor_id", 4], ["patient_id", 49], ["created_at", "2022-10-27 12:52:28.054517"], ["updated_at", "2022-10-27 12:52:28.054517"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:06:34"], ["doctor_id", 3], ["patient_id", 6], ["created_at", "2022-10-27 12:52:28.065836"], ["updated_at", "2022-10-27 12:52:28.065836"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 05:06:04"], ["doctor_id", 8], ["patient_id", 15], ["created_at", "2022-10-27 12:52:28.076278"], ["updated_at", "2022-10-27 12:52:28.076278"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 43], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:52:08"], ["doctor_id", 5], ["patient_id", 43], ["created_at", "2022-10-27 12:52:28.086473"], ["updated_at", "2022-10-27 12:52:28.086473"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 23], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 06:13:36"], ["doctor_id", 9], ["patient_id", 23], ["created_at", "2022-10-27 12:52:28.096287"], ["updated_at", "2022-10-27 12:52:28.096287"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 05:43:19"], ["doctor_id", 2], ["patient_id", 10], ["created_at", "2022-10-27 12:52:28.106454"], ["updated_at", "2022-10-27 12:52:28.106454"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 32], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:30:28"], ["doctor_id", 3], ["patient_id", 32], ["created_at", "2022-10-27 12:52:28.116876"], ["updated_at", "2022-10-27 12:52:28.116876"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 36], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 15:22:53"], ["doctor_id", 9], ["patient_id", 36], ["created_at", "2022-10-27 12:52:28.127294"], ["updated_at", "2022-10-27 12:52:28.127294"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 11], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:33:24"], ["doctor_id", 1], ["patient_id", 11], ["created_at", "2022-10-27 12:52:28.137470"], ["updated_at", "2022-10-27 12:52:28.137470"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 47], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 16:13:05"], ["doctor_id", 8], ["patient_id", 47], ["created_at", "2022-10-27 12:52:28.147948"], ["updated_at", "2022-10-27 12:52:28.147948"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 20:23:10"], ["doctor_id", 2], ["patient_id", 15], ["created_at", "2022-10-27 12:52:28.158150"], ["updated_at", "2022-10-27 12:52:28.158150"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 13:15:22"], ["doctor_id", 2], ["patient_id", 15], ["created_at", "2022-10-27 12:52:28.168231"], ["updated_at", "2022-10-27 12:52:28.168231"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 38], ["LIMIT", 1]]
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:12:41"], ["doctor_id", 7], ["patient_id", 38], ["created_at", "2022-10-27 12:52:28.178350"], ["updated_at", "2022-10-27 12:52:28.178350"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 22], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 05:11:22"], ["doctor_id", 2], ["patient_id", 22], ["created_at", "2022-10-27 12:52:28.188811"], ["updated_at", "2022-10-27 12:52:28.188811"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 25], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:31:31"], ["doctor_id", 5], ["patient_id", 25], ["created_at", "2022-10-27 12:52:28.199341"], ["updated_at", "2022-10-27 12:52:28.199341"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 11:32:23"], ["doctor_id", 1], ["patient_id", 4], ["created_at", "2022-10-27 12:52:28.209873"], ["updated_at", "2022-10-27 12:52:28.209873"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 39], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 20:06:55"], ["doctor_id", 7], ["patient_id", 39], ["created_at", "2022-10-27 12:52:28.220566"], ["updated_at", "2022-10-27 12:52:28.220566"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 13:16:48"], ["doctor_id", 5], ["patient_id", 24], ["created_at", "2022-10-27 12:52:28.231197"], ["updated_at", "2022-10-27 12:52:28.231197"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 11], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.3ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:28:16"], ["doctor_id", 6], ["patient_id", 11], ["created_at", "2022-10-27 12:52:28.241809"], ["updated_at", "2022-10-27 12:52:28.241809"], ["city_id", 9]]
+  [1m[36mTRANSACTION (6.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 46], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 22:13:08"], ["doctor_id", 8], ["patient_id", 46], ["created_at", "2022-10-27 12:52:28.253212"], ["updated_at", "2022-10-27 12:52:28.253212"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 09:02:18"], ["doctor_id", 10], ["patient_id", 2], ["created_at", "2022-10-27 12:52:28.263861"], ["updated_at", "2022-10-27 12:52:28.263861"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:02:15"], ["doctor_id", 4], ["patient_id", 18], ["created_at", "2022-10-27 12:52:28.274582"], ["updated_at", "2022-10-27 12:52:28.274582"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:22:37"], ["doctor_id", 3], ["patient_id", 10], ["created_at", "2022-10-27 12:52:28.284938"], ["updated_at", "2022-10-27 12:52:28.284938"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 01:43:22"], ["doctor_id", 10], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.295016"], ["updated_at", "2022-10-27 12:52:28.295016"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 11], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 09:06:18"], ["doctor_id", 3], ["patient_id", 11], ["created_at", "2022-10-27 12:52:28.305380"], ["updated_at", "2022-10-27 12:52:28.305380"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 16:51:45"], ["doctor_id", 2], ["patient_id", 18], ["created_at", "2022-10-27 12:52:28.315991"], ["updated_at", "2022-10-27 12:52:28.315991"], ["city_id", 9]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 18:08:14"], ["doctor_id", 4], ["patient_id", 7], ["created_at", "2022-10-27 12:52:28.326626"], ["updated_at", "2022-10-27 12:52:28.326626"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:12:28"], ["doctor_id", 3], ["patient_id", 8], ["created_at", "2022-10-27 12:52:28.337141"], ["updated_at", "2022-10-27 12:52:28.337141"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 43], ["LIMIT", 1]]
+  [1m[36mCity Load (0.1ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 10:38:24"], ["doctor_id", 8], ["patient_id", 43], ["created_at", "2022-10-27 12:52:28.348085"], ["updated_at", "2022-10-27 12:52:28.348085"], ["city_id", 4]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 17], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:26:26"], ["doctor_id", 9], ["patient_id", 17], ["created_at", "2022-10-27 12:52:28.359107"], ["updated_at", "2022-10-27 12:52:28.359107"], ["city_id", 9]]
+  [1m[36mTRANSACTION (6.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 13:07:51"], ["doctor_id", 1], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.370468"], ["updated_at", "2022-10-27 12:52:28.370468"], ["city_id", 7]]
+  [1m[36mTRANSACTION (6.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 09:35:06"], ["doctor_id", 2], ["patient_id", 7], ["created_at", "2022-10-27 12:52:28.381680"], ["updated_at", "2022-10-27 12:52:28.381680"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 12], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:57:32"], ["doctor_id", 8], ["patient_id", 12], ["created_at", "2022-10-27 12:52:28.392432"], ["updated_at", "2022-10-27 12:52:28.392432"], ["city_id", 2]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 04:03:07"], ["doctor_id", 4], ["patient_id", 8], ["created_at", "2022-10-27 12:52:28.403455"], ["updated_at", "2022-10-27 12:52:28.403455"], ["city_id", 7]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 47], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 05:42:15"], ["doctor_id", 5], ["patient_id", 47], ["created_at", "2022-10-27 12:52:28.414158"], ["updated_at", "2022-10-27 12:52:28.414158"], ["city_id", 4]]
+  [1m[36mTRANSACTION (6.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 41], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:54:59"], ["doctor_id", 4], ["patient_id", 41], ["created_at", "2022-10-27 12:52:28.426001"], ["updated_at", "2022-10-27 12:52:28.426001"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 17], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 18:35:17"], ["doctor_id", 5], ["patient_id", 17], ["created_at", "2022-10-27 12:52:28.437364"], ["updated_at", "2022-10-27 12:52:28.437364"], ["city_id", 5]]
+  [1m[36mTRANSACTION (7.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 08:01:23"], ["doctor_id", 3], ["patient_id", 6], ["created_at", "2022-10-27 12:52:28.449247"], ["updated_at", "2022-10-27 12:52:28.449247"], ["city_id", 5]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 25], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:22:36"], ["doctor_id", 4], ["patient_id", 25], ["created_at", "2022-10-27 12:52:28.460064"], ["updated_at", "2022-10-27 12:52:28.460064"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:01:07"], ["doctor_id", 8], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.470240"], ["updated_at", "2022-10-27 12:52:28.470240"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 08:51:05"], ["doctor_id", 10], ["patient_id", 9], ["created_at", "2022-10-27 12:52:28.482442"], ["updated_at", "2022-10-27 12:52:28.482442"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:15:42"], ["doctor_id", 7], ["patient_id", 8], ["created_at", "2022-10-27 12:52:28.493245"], ["updated_at", "2022-10-27 12:52:28.493245"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.1ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 34], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 12:24:13"], ["doctor_id", 8], ["patient_id", 34], ["created_at", "2022-10-27 12:52:28.503491"], ["updated_at", "2022-10-27 12:52:28.503491"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 46], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 22:38:19"], ["doctor_id", 6], ["patient_id", 46], ["created_at", "2022-10-27 12:52:28.513971"], ["updated_at", "2022-10-27 12:52:28.513971"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 22:56:24"], ["doctor_id", 2], ["patient_id", 10], ["created_at", "2022-10-27 12:52:28.524420"], ["updated_at", "2022-10-27 12:52:28.524420"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 15:35:03"], ["doctor_id", 7], ["patient_id", 16], ["created_at", "2022-10-27 12:52:28.534923"], ["updated_at", "2022-10-27 12:52:28.534923"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:19:23"], ["doctor_id", 4], ["patient_id", 6], ["created_at", "2022-10-27 12:52:28.545194"], ["updated_at", "2022-10-27 12:52:28.545194"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:39:55"], ["doctor_id", 6], ["patient_id", 8], ["created_at", "2022-10-27 12:52:28.555687"], ["updated_at", "2022-10-27 12:52:28.555687"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 21], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:25:08"], ["doctor_id", 8], ["patient_id", 21], ["created_at", "2022-10-27 12:52:28.566051"], ["updated_at", "2022-10-27 12:52:28.566051"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.2ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 22], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 22:21:18"], ["doctor_id", 2], ["patient_id", 22], ["created_at", "2022-10-27 12:52:28.577007"], ["updated_at", "2022-10-27 12:52:28.577007"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 41], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 13:58:15"], ["doctor_id", 7], ["patient_id", 41], ["created_at", "2022-10-27 12:52:28.587646"], ["updated_at", "2022-10-27 12:52:28.587646"], ["city_id", 2]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 13:46:31"], ["doctor_id", 4], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.598440"], ["updated_at", "2022-10-27 12:52:28.598440"], ["city_id", 5]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 44], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 04:07:09"], ["doctor_id", 6], ["patient_id", 44], ["created_at", "2022-10-27 12:52:28.609575"], ["updated_at", "2022-10-27 12:52:28.609575"], ["city_id", 9]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 20], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 05:04:42"], ["doctor_id", 9], ["patient_id", 20], ["created_at", "2022-10-27 12:52:28.620605"], ["updated_at", "2022-10-27 12:52:28.620605"], ["city_id", 4]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.1ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 04:15:01"], ["doctor_id", 5], ["patient_id", 1], ["created_at", "2022-10-27 12:52:28.631406"], ["updated_at", "2022-10-27 12:52:28.631406"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 24], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:24:19"], ["doctor_id", 6], ["patient_id", 24], ["created_at", "2022-10-27 12:52:28.642315"], ["updated_at", "2022-10-27 12:52:28.642315"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 33], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 17:44:50"], ["doctor_id", 9], ["patient_id", 33], ["created_at", "2022-10-27 12:52:28.652714"], ["updated_at", "2022-10-27 12:52:28.652714"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 26], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.3ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:25:38"], ["doctor_id", 2], ["patient_id", 26], ["created_at", "2022-10-27 12:52:28.663392"], ["updated_at", "2022-10-27 12:52:28.663392"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 41], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 04:56:23"], ["doctor_id", 9], ["patient_id", 41], ["created_at", "2022-10-27 12:52:28.674624"], ["updated_at", "2022-10-27 12:52:28.674624"], ["city_id", 8]]
+  [1m[36mTRANSACTION (6.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 20], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:14:25"], ["doctor_id", 9], ["patient_id", 20], ["created_at", "2022-10-27 12:52:28.686229"], ["updated_at", "2022-10-27 12:52:28.686229"], ["city_id", 5]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 48], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 06:02:36"], ["doctor_id", 10], ["patient_id", 48], ["created_at", "2022-10-27 12:52:28.697706"], ["updated_at", "2022-10-27 12:52:28.697706"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.4ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 20], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:22:40"], ["doctor_id", 10], ["patient_id", 20], ["created_at", "2022-10-27 12:52:28.709160"], ["updated_at", "2022-10-27 12:52:28.709160"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 18], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 12:01:07"], ["doctor_id", 5], ["patient_id", 18], ["created_at", "2022-10-27 12:52:28.719956"], ["updated_at", "2022-10-27 12:52:28.719956"], ["city_id", 8]]
+  [1m[36mTRANSACTION (6.2ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 17], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 16:44:38"], ["doctor_id", 7], ["patient_id", 17], ["created_at", "2022-10-27 12:52:28.730931"], ["updated_at", "2022-10-27 12:52:28.730931"], ["city_id", 10]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 31], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 00:31:23"], ["doctor_id", 4], ["patient_id", 31], ["created_at", "2022-10-27 12:52:28.741371"], ["updated_at", "2022-10-27 12:52:28.741371"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 23], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 23:14:15"], ["doctor_id", 8], ["patient_id", 23], ["created_at", "2022-10-27 12:52:28.751967"], ["updated_at", "2022-10-27 12:52:28.751967"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 10:55:07"], ["doctor_id", 6], ["patient_id", 16], ["created_at", "2022-10-27 12:52:28.762807"], ["updated_at", "2022-10-27 12:52:28.762807"], ["city_id", 7]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 03:54:00"], ["doctor_id", 2], ["patient_id", 15], ["created_at", "2022-10-27 12:52:28.773104"], ["updated_at", "2022-10-27 12:52:28.773104"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 48], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:21:49"], ["doctor_id", 7], ["patient_id", 48], ["created_at", "2022-10-27 12:52:28.783925"], ["updated_at", "2022-10-27 12:52:28.783925"], ["city_id", 1]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 41], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:34:12"], ["doctor_id", 8], ["patient_id", 41], ["created_at", "2022-10-27 12:52:28.795210"], ["updated_at", "2022-10-27 12:52:28.795210"], ["city_id", 8]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 34], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:13:48"], ["doctor_id", 8], ["patient_id", 34], ["created_at", "2022-10-27 12:52:28.806102"], ["updated_at", "2022-10-27 12:52:28.806102"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.5ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 25], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:28:31"], ["doctor_id", 1], ["patient_id", 25], ["created_at", "2022-10-27 12:52:28.816622"], ["updated_at", "2022-10-27 12:52:28.816622"], ["city_id", 6]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 16], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 17:33:44"], ["doctor_id", 2], ["patient_id", 16], ["created_at", "2022-10-27 12:52:28.827103"], ["updated_at", "2022-10-27 12:52:28.827103"], ["city_id", 4]]
+  [1m[36mTRANSACTION (5.6ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 01:09:37"], ["doctor_id", 1], ["patient_id", 2], ["created_at", "2022-10-27 12:52:28.837821"], ["updated_at", "2022-10-27 12:52:28.837821"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 29], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 18:33:33"], ["doctor_id", 5], ["patient_id", 29], ["created_at", "2022-10-27 12:52:28.848599"], ["updated_at", "2022-10-27 12:52:28.848599"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 40], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 11:34:10"], ["doctor_id", 2], ["patient_id", 40], ["created_at", "2022-10-27 12:52:28.859508"], ["updated_at", "2022-10-27 12:52:28.859508"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 1], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 02:49:07"], ["doctor_id", 8], ["patient_id", 1], ["created_at", "2022-10-27 12:52:28.870021"], ["updated_at", "2022-10-27 12:52:28.870021"], ["city_id", 1]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 48], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:19:12"], ["doctor_id", 3], ["patient_id", 48], ["created_at", "2022-10-27 12:52:28.880753"], ["updated_at", "2022-10-27 12:52:28.880753"], ["city_id", 3]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 36], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 01:46:53"], ["doctor_id", 7], ["patient_id", 36], ["created_at", "2022-10-27 12:52:28.891575"], ["updated_at", "2022-10-27 12:52:28.891575"], ["city_id", 2]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 38], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 14:50:17"], ["doctor_id", 10], ["patient_id", 38], ["created_at", "2022-10-27 12:52:28.902313"], ["updated_at", "2022-10-27 12:52:28.902313"], ["city_id", 8]]
+  [1m[36mTRANSACTION (5.8ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 26], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 21:49:55"], ["doctor_id", 8], ["patient_id", 26], ["created_at", "2022-10-27 12:52:28.912949"], ["updated_at", "2022-10-27 12:52:28.912949"], ["city_id", 2]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 26], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 8], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 06:37:04"], ["doctor_id", 10], ["patient_id", 26], ["created_at", "2022-10-27 12:52:28.923975"], ["updated_at", "2022-10-27 12:52:28.923975"], ["city_id", 8]]
+  [1m[36mTRANSACTION (6.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 21], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 16:44:36"], ["doctor_id", 5], ["patient_id", 21], ["created_at", "2022-10-27 12:52:28.935372"], ["updated_at", "2022-10-27 12:52:28.935372"], ["city_id", 7]]
+  [1m[36mTRANSACTION (6.3ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 15], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 9], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 19:40:27"], ["doctor_id", 9], ["patient_id", 15], ["created_at", "2022-10-27 12:52:28.946893"], ["updated_at", "2022-10-27 12:52:28.946893"], ["city_id", 9]]
+  [1m[36mTRANSACTION (7.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 2], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 50], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 10:11:22"], ["doctor_id", 2], ["patient_id", 50], ["created_at", "2022-10-27 12:52:28.959639"], ["updated_at", "2022-10-27 12:52:28.959639"], ["city_id", 5]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 7], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 44], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-27 23:27:29"], ["doctor_id", 7], ["patient_id", 44], ["created_at", "2022-10-27 12:52:28.970593"], ["updated_at", "2022-10-27 12:52:28.970593"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.0ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 30], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 5], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 06:14:41"], ["doctor_id", 3], ["patient_id", 30], ["created_at", "2022-10-27 12:52:28.981408"], ["updated_at", "2022-10-27 12:52:28.981408"], ["city_id", 5]]
+  [1m[36mTRANSACTION (5.9ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 3], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 29], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 6], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.1ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 09:44:27"], ["doctor_id", 3], ["patient_id", 29], ["created_at", "2022-10-27 12:52:28.992174"], ["updated_at", "2022-10-27 12:52:28.992174"], ["city_id", 6]]
+  [1m[36mTRANSACTION (6.1ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mTRANSACTION (0.0ms)[0m  [1m[36mbegin transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors" WHERE "doctors"."id" = ? LIMIT ?[0m  [["id", 4], ["LIMIT", 1]]
+  [1m[36mPatient Load (0.0ms)[0m  [1m[34mSELECT "patients".* FROM "patients" WHERE "patients"."id" = ? LIMIT ?[0m  [["id", 35], ["LIMIT", 1]]
+  [1m[36mCity Load (0.0ms)[0m  [1m[34mSELECT "cities".* FROM "cities" WHERE "cities"."id" = ? LIMIT ?[0m  [["id", 10], ["LIMIT", 1]]
+  [1m[36mAppointment Create (0.2ms)[0m  [1m[32mINSERT INTO "appointments" ("date", "doctor_id", "patient_id", "created_at", "updated_at", "city_id") VALUES (?, ?, ?, ?, ?, ?)[0m  [["date", "2022-10-28 07:29:16"], ["doctor_id", 4], ["patient_id", 35], ["created_at", "2022-10-27 12:52:29.003246"], ["updated_at", "2022-10-27 12:52:29.003246"], ["city_id", 10]]
+  [1m[36mTRANSACTION (6.7ms)[0m  [1m[36mcommit transaction[0m
+  [1m[36mDoctor Load (0.1ms)[0m  [1m[34mSELECT "doctors".* FROM "doctors"[0m
